@@ -2,7 +2,7 @@
 
 if [ $# -eq 0 ] ; then
     # Get the current HEAD gitsha, and use the first 8 chars as a short reference to it
-    REV=$(git ls-remote https://github.com/Project-OSRM/osrm-backend.git HEAD | cut -f 1 | cut -c1-8 )
+    REV=$(git ls-remote https://github.com/tiramizoo/osrm-backend.git HEAD | cut -f 1 | cut -c1-8 )
     PREFIX="master-"
     echo "No tag/gitsha/branch supplied, using master@${REV}"
 else

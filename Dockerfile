@@ -29,7 +29,7 @@ RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
     \
     echo "Building OSRM ${OSRM_VERSION}" &&\
     cd /opt && \
-    git clone https://github.com/Project-OSRM/osrm-backend.git && \
+    git clone https://github.com/tiramizoo/osrm-backend.git && \
     cd osrm-backend && \
     git checkout ${OSRM_VERSION} && \
     mkdir build && \
