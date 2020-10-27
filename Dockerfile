@@ -1,6 +1,6 @@
 # OSRM processing tools, server and profile
 
-FROM alpine:3.4
+FROM debian:stretch
 
 # This can be a gitsha, tag, or branch - anything that works with `git checkout`
 ARG OSRM_VERSION
@@ -9,45 +9,21 @@ ARG OSRM_VERSION
 # release mode.
 ARG BUILD_TYPE=Release
 
-RUN mkdir /opt
-WORKDIR /opt
-RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
-    echo "@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-    apk update && \
-    apk upgrade && \
-    apk add git cmake wget make libc-dev gcc g++ bzip2-dev boost-dev zlib-dev expat-dev lua5.2-dev libtbb@testing libtbb-dev@testing
+RUN apt update \
+  && DEBIAN_FRONTEND=noninteractive apt install -y \
+  git g++ cmake libboost-dev libboost-filesystem-dev libboost-thread-dev \
+  libboost-system-dev libboost-regex-dev libxml2-dev libsparsehash-dev libbz2-dev \
+  zlib1g-dev libzip-dev libgomp1 liblua5.3-dev \
+  pkg-config libgdal-dev libboost-program-options-dev libboost-iostreams-dev \
+  libboost-test-dev libtbb-dev libexpat1-dev
 
 RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
-    echo "Building libstxxl" && \
-    cd /opt && \
-    git clone --depth 1 --branch 1.4.1 https://github.com/stxxl/stxxl.git && \
-    cd stxxl && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release .. && \
-    make -j${NPROC} && \
-    make install
-
-RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
-    echo "Building OSRM ${OSRM_VERSION}" &&\
-    cd /opt && \
-    git clone https://github.com/tiramizoo/osrm-backend.git && \
-    cd osrm-backend && \
-    git checkout ${OSRM_VERSION} && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DENABLE_LTO=On .. && \
-    make -j${NPROC} install && \
-    cd ../profiles && \
-    cp -r * /opt && \
-    \
-    echo "Cleaning up" && \
-    strip /usr/local/bin/* && \
-    rm /usr/local/lib/libstxxl* && \
-    cd /opt && \
-    apk del boost-dev && \
-    apk del g++ cmake libc-dev expat-dev zlib-dev bzip2-dev lua5.2-dev git make gcc && \
-    apk add boost-filesystem boost-program_options boost-regex boost-iostreams boost-thread libgomp lua5.2 expat && \
-    rm -rf /opt/osrm-backend /opt/stxxl /usr/local/bin/stxxl_tool /usr/local/lib/libosrm*
+  echo "Building OSRM ${OSRM_VERSION}" && \
+  git clone https://github.com/tiramizoo/osrm-backend.git && \
+  cd osrm-backend && \
+  mkdir build && \
+  cd build && \
+  cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DENABLE_LTO=On .. && \
+  make -j${NPROC} install
 
 EXPOSE 5000
