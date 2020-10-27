@@ -15,8 +15,9 @@ RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
     echo "@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
     apk update && \
     apk upgrade && \
-    apk add git cmake wget make libc-dev gcc g++ bzip2-dev boost-dev zlib-dev expat-dev lua5.1-dev libtbb@testing libtbb-dev@testing && \
-    \
+    apk add git cmake wget make libc-dev gcc g++ bzip2-dev boost-dev zlib-dev expat-dev lua5.2-dev libtbb@testing libtbb-dev@testing
+
+RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
     echo "Building libstxxl" && \
     cd /opt && \
     git clone --depth 1 --branch 1.4.1 https://github.com/stxxl/stxxl.git && \
@@ -25,8 +26,9 @@ RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
     cd build && \
     cmake -DCMAKE_BUILD_TYPE=Release .. && \
     make -j${NPROC} && \
-    make install && \
-    \
+    make install
+
+RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
     echo "Building OSRM ${OSRM_VERSION}" &&\
     cd /opt && \
     git clone https://github.com/tiramizoo/osrm-backend.git && \
@@ -44,8 +46,8 @@ RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
     rm /usr/local/lib/libstxxl* && \
     cd /opt && \
     apk del boost-dev && \
-    apk del g++ cmake libc-dev expat-dev zlib-dev bzip2-dev lua5.1-dev git make gcc && \
-    apk add boost-filesystem boost-program_options boost-regex boost-iostreams boost-thread libgomp lua5.1 expat && \
+    apk del g++ cmake libc-dev expat-dev zlib-dev bzip2-dev lua5.2-dev git make gcc && \
+    apk add boost-filesystem boost-program_options boost-regex boost-iostreams boost-thread libgomp lua5.2 expat && \
     rm -rf /opt/osrm-backend /opt/stxxl /usr/local/bin/stxxl_tool /usr/local/lib/libosrm*
 
 EXPOSE 5000
