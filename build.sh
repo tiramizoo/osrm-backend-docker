@@ -11,5 +11,5 @@ else
     PREFIX=""
 fi
 
-docker build -t osrm/osrm-backend:${PREFIX}${REV} --build-arg OSRM_VERSION=${REV} --build-arg BUILD_TYPE=Release .
-docker build -t osrm/osrm-backend:${PREFIX}${REV}-debug --build-arg OSRM_VERSION=${REV} --build-arg BUILD_TYPE=Debug .
+docker build -t tiramizoo/osrm-backend:${PREFIX}${REV} --build-arg DOCKER_TAG=${REV} --build-arg BUILD_TYPE=Release .
+docker build -t tiramizoo/osrm-backend:${PREFIX}${REV}-debug --build-arg DOCKER_TAG=${REV} --build-arg BUILD_TYPE=Debug .
